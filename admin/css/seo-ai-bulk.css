@@ -1,0 +1,220 @@
+/* SEO AI Bulk — Admin Styles */
+
+/* Overlay */
+.seoai-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 100000;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 40px 20px;
+	box-sizing: border-box;
+}
+
+/* Modal container */
+.seoai-modal {
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0 4px 32px rgba(0,0,0,0.3);
+	width: 100%;
+	max-width: 1100px;
+	max-height: calc(100vh - 80px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+/* Header */
+.seoai-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 24px;
+	border-bottom: 1px solid #ddd;
+	background: #f0f6fc;
+}
+
+.seoai-modal-header h2 {
+	margin: 0;
+	font-size: 18px;
+	color: #1d2327;
+}
+
+.seoai-close {
+	background: none;
+	border: none;
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+	color: #666;
+	padding: 0 4px;
+}
+.seoai-close:hover { color: #d63638; }
+
+/* Body */
+.seoai-modal-body {
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px 24px;
+}
+
+/* Progress bar */
+#seoai-progress-bar-wrap {
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+#seoai-progress-bar {
+	flex: 1;
+	height: 12px;
+	background: #e0e0e0;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+#seoai-progress-fill {
+	height: 100%;
+	width: 0%;
+	background: #2271b1;
+	border-radius: 6px;
+	transition: width 0.3s ease;
+}
+
+#seoai-progress-label {
+	white-space: nowrap;
+	font-size: 13px;
+	color: #50575e;
+	min-width: 80px;
+}
+
+/* Table */
+.seoai-table-wrap {
+	overflow-x: auto;
+}
+
+.seoai-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.seoai-table th {
+	background: #f6f7f7;
+	text-align: left;
+	padding: 10px 12px;
+	font-weight: 600;
+	border-bottom: 2px solid #ddd;
+	white-space: nowrap;
+}
+
+.seoai-table td {
+	padding: 10px 12px;
+	vertical-align: top;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.seoai-table tr:last-child td { border-bottom: none; }
+.seoai-table tr:hover td { background: #fafafa; }
+
+/* Row inputs */
+.seoai-table input[type="text"],
+.seoai-table textarea {
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 13px;
+	padding: 6px 8px;
+}
+
+.seoai-table textarea {
+	height: 72px;
+	resize: vertical;
+}
+
+/* Character count indicators */
+.seoai-char-count {
+	font-size: 11px;
+	color: #50575e;
+	margin-top: 2px;
+	display: block;
+}
+.seoai-char-count.over { color: #d63638; }
+
+/* Status badges */
+.seoai-status {
+	display: inline-block;
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+.seoai-status-pending    { background: #f0f0f0; color: #50575e; }
+.seoai-status-generating { background: #fff8e5; color: #996800; }
+.seoai-status-done       { background: #edfaef; color: #1a7931; }
+.seoai-status-saved      { background: #d7edff; color: #0a4b78; }
+.seoai-status-skipped    { background: #f0f0f0; color: #999; }
+.seoai-status-error      { background: #fce8e8; color: #d63638; }
+
+/* Row actions */
+.seoai-row-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.seoai-row-actions .button {
+	width: 100%;
+	text-align: center;
+	font-size: 12px;
+}
+
+/* Post title column */
+.seoai-post-title {
+	font-weight: 600;
+	max-width: 180px;
+	word-break: break-word;
+}
+.seoai-post-title a {
+	text-decoration: none;
+	color: #2271b1;
+}
+.seoai-post-title a:hover { text-decoration: underline; }
+
+/* Spinner */
+.seoai-spinner {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border: 2px solid #ddd;
+	border-top-color: #2271b1;
+	border-radius: 50%;
+	animation: seoai-spin 0.6s linear infinite;
+	vertical-align: middle;
+	margin-right: 4px;
+}
+@keyframes seoai-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.seoai-modal-footer {
+	padding: 16px 24px;
+	border-top: 1px solid #ddd;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background: #f9f9f9;
+}
+
+#seoai-apply-all-status {
+	font-size: 13px;
+	color: #50575e;
+}
+
+/* Settings page */
+.seoai-api-key-row,
+.seoai-ollama-row {
+	transition: opacity 0.2s;
+}
