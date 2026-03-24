@@ -39,6 +39,10 @@
 			<button type="button" id="seoai-close-modal" class="button button-secondary">
 				<?php esc_html_e( 'Close', 'seo-ai-bulk' ); ?>
 			</button>
+			<div id="seoai-apply-progress-wrap" style="display:none;">
+				<div id="seoai-apply-progress-bar"><div id="seoai-apply-progress-fill"></div></div>
+				<span id="seoai-apply-progress-label"></span>
+			</div>
 			<span id="seoai-apply-all-status"></span>
 		</div>
 	</div>

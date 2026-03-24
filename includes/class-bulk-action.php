@@ -7,11 +7,15 @@ defined( 'ABSPATH' ) || exit;
 class BulkAction {
 
 	public function __construct() {
-		foreach ( [ 'post', 'page' ] as $post_type ) {
+		add_action( 'init', [ $this, 'register_hooks' ], 20 );
+		add_action( 'admin_notices', [ $this, 'maybe_show_trigger_notice' ] );
+	}
+
+	public function register_hooks(): void {
+		foreach ( Plugin::get_supported_post_types() as $post_type ) {
 			add_filter( "bulk_actions-edit-{$post_type}", [ $this, 'register_bulk_action' ] );
 			add_filter( "handle_bulk_actions-edit-{$post_type}", [ $this, 'handle_bulk_action' ], 10, 3 );
 		}
-		add_action( 'admin_notices', [ $this, 'maybe_show_trigger_notice' ] );
 	}
 
 	public function register_bulk_action( array $actions ): array {

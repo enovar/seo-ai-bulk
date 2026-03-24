@@ -32,7 +32,7 @@ class ProviderGroq extends ProviderBase {
 			'response_format' => [ 'type' => 'json_object' ],
 		] );
 
-		$response = wp_remote_post( self::API_ENDPOINT, [
+		$response = $this->request_with_retry( self::API_ENDPOINT, [
 			'headers' => [
 				'Content-Type'  => 'application/json',
 				'Authorization' => 'Bearer ' . $this->api_key,
@@ -40,10 +40,6 @@ class ProviderGroq extends ProviderBase {
 			'body'    => $body,
 			'timeout' => 60,
 		] );
-
-		if ( is_wp_error( $response ) ) {
-			$this->throw_wp_error( $response );
-		}
 
 		$status = wp_remote_retrieve_response_code( $response );
 		$raw    = wp_remote_retrieve_body( $response );

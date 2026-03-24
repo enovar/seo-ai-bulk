@@ -33,7 +33,7 @@ class ProviderHuggingFace extends ProviderBase {
 			'max_tokens'  => 300,
 		] );
 
-		$response = wp_remote_post( $endpoint, [
+		$response = $this->request_with_retry( $endpoint, [
 			'headers' => [
 				'Content-Type'  => 'application/json',
 				'Authorization' => 'Bearer ' . $this->api_key,
@@ -41,10 +41,6 @@ class ProviderHuggingFace extends ProviderBase {
 			'body'    => $body,
 			'timeout' => 90,
 		] );
-
-		if ( is_wp_error( $response ) ) {
-			$this->throw_wp_error( $response );
-		}
 
 		$status = wp_remote_retrieve_response_code( $response );
 		$raw    = wp_remote_retrieve_body( $response );

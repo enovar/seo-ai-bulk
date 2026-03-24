@@ -45,4 +45,43 @@ abstract class ProviderBase {
 			)
 		);
 	}
+
+	/**
+	 * Send a POST request and automatically retry on HTTP 429 (rate limit).
+	 * Reads the wait time from the Retry-After header or the response body.
+	 *
+	 * @throws \Exception On network failure or when retries are exhausted.
+	 */
+	protected function request_with_retry( string $url, array $args, int $max_retries = 3 ): array {
+		$attempt = 0;
+		while ( true ) {
+			$response = wp_remote_post( $url, $args );
+
+			if ( is_wp_error( $response ) ) {
+				$this->throw_wp_error( $response );
+			}
+
+			$status = wp_remote_retrieve_response_code( $response );
+
+			if ( 429 !== $status || $attempt >= $max_retries ) {
+				return $response;
+			}
+
+			$wait = $this->parse_retry_after( $response );
+			sleep( $wait );
+			$attempt++;
+		}
+	}
+
+	private function parse_retry_after( array $response ): int {
+		$header = wp_remote_retrieve_header( $response, 'retry-after' );
+		if ( $header && is_numeric( $header ) ) {
+			return (int) ceil( (float) $header ) + 1;
+		}
+		$body = wp_remote_retrieve_body( $response );
+		if ( preg_match( '/try again in (\d+(?:\.\d+)?)s/i', $body, $m ) ) {
+			return (int) ceil( (float) $m[1] ) + 1;
+		}
+		return 5;
+	}
 }

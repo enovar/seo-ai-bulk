@@ -56,6 +56,24 @@ class AdminSettings {
 		register_setting( self::OPTION_GROUP, 'seoai_model',            [ 'sanitize_callback' => 'sanitize_text_field', 'default' => '' ] );
 		register_setting( self::OPTION_GROUP, 'seoai_ollama_endpoint',  [ 'sanitize_callback' => 'sanitize_text_field', 'default' => 'http://localhost:11434/api/generate' ] );
 		register_setting( self::OPTION_GROUP, 'seoai_prompt_template',  [ 'sanitize_callback' => 'sanitize_textarea_field', 'default' => '' ] );
+		register_setting( self::OPTION_GROUP, 'seoai_post_types',       [ 'sanitize_callback' => [ $this, 'sanitize_post_types' ], 'default' => [ 'post', 'page' ] ] );
+	}
+
+	public function sanitize_post_types( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [ 'post', 'page' ];
+		}
+		$allowed = array_keys( $this->get_available_post_types() );
+		return array_values( array_intersect( array_map( 'sanitize_key', $value ), $allowed ) );
+	}
+
+	private function get_available_post_types(): array {
+		$post_types = get_post_types( [ 'public' => true ], 'objects' );
+		$result     = [];
+		foreach ( $post_types as $type ) {
+			$result[ $type->name ] = $type->labels->singular_name ?? $type->name;
+		}
+		return $result;
 	}
 
 	public function render_page(): void {
@@ -68,6 +86,7 @@ class AdminSettings {
 		$model           = get_option( 'seoai_model', '' );
 		$ollama_endpoint = get_option( 'seoai_ollama_endpoint', 'http://localhost:11434/api/generate' );
 		$prompt_template = get_option( 'seoai_prompt_template', '' );
+		$saved_post_types = get_option( 'seoai_post_types', [ 'post', 'page' ] );
 
 		$writer         = new SEOWriter();
 		$detected_plugin = $writer->detect_seo_plugin();
@@ -164,12 +183,26 @@ class AdminSettings {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Post Types', 'seo-ai-bulk' ); ?></th>
+						<td>
+							<?php foreach ( $this->get_available_post_types() as $slug => $label ) : ?>
+							<label style="display:inline-block;margin-right:16px;">
+								<input type="checkbox" name="seoai_post_types[]"
+									value="<?php echo esc_attr( $slug ); ?>"
+									<?php checked( in_array( $slug, (array) $saved_post_types, true ) ); ?> />
+								<?php echo esc_html( $label ); ?> <code><?php echo esc_html( $slug ); ?></code>
+							</label>
+							<?php endforeach; ?>
+							<p class="description"><?php esc_html_e( 'Select which post types should have the "Generate SEO with AI" bulk action.', 'seo-ai-bulk' ); ?></p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><label for="seoai_prompt_template"><?php esc_html_e( 'Custom Prompt Template', 'seo-ai-bulk' ); ?></label></th>
 						<td>
 							<textarea id="seoai_prompt_template" name="seoai_prompt_template" rows="8" class="large-text"><?php echo esc_textarea( $prompt_template ); ?></textarea>
 							<p class="description">
-								<?php esc_html_e( 'Available placeholders: {post_title}, {post_content}. Leave blank to use the default prompt.', 'seo-ai-bulk' ); ?><br>
-								<?php esc_html_e( 'The prompt must instruct the AI to respond with a JSON object containing "title", "description", and "keyword" keys.', 'seo-ai-bulk' ); ?>
+								<?php esc_html_e( 'Available placeholders: {post_title}, {post_content}, {post_slug}. Leave blank to use the default prompt.', 'seo-ai-bulk' ); ?><br>
+								<?php esc_html_e( 'The prompt must instruct the AI to respond with a JSON object containing "title", "description", and "keyword" keys. The keyword must be a single word present in the post slug.', 'seo-ai-bulk' ); ?>
 							</p>
 						</td>
 					</tr>

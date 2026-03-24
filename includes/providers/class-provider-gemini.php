@@ -36,17 +36,13 @@ class ProviderGemini extends ProviderBase {
 			],
 		] );
 
-		$response = wp_remote_post( $endpoint, [
+		$response = $this->request_with_retry( $endpoint, [
 			'headers' => [
 				'Content-Type' => 'application/json',
 			],
 			'body'    => $body,
 			'timeout' => 60,
 		] );
-
-		if ( is_wp_error( $response ) ) {
-			$this->throw_wp_error( $response );
-		}
 
 		$status = wp_remote_retrieve_response_code( $response );
 		$raw    = wp_remote_retrieve_body( $response );

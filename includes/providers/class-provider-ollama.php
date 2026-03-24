@@ -27,17 +27,13 @@ class ProviderOllama extends ProviderBase {
 			'format' => 'json',
 		] );
 
-		$response = wp_remote_post( $this->endpoint, [
+		$response = $this->request_with_retry( $this->endpoint, [
 			'headers' => [
 				'Content-Type' => 'application/json',
 			],
 			'body'    => $body,
 			'timeout' => 120,
 		] );
-
-		if ( is_wp_error( $response ) ) {
-			$this->throw_wp_error( $response );
-		}
 
 		$status = wp_remote_retrieve_response_code( $response );
 		$raw    = wp_remote_retrieve_body( $response );

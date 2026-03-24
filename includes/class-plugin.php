@@ -30,7 +30,7 @@ class Plugin {
 		}
 
 		$screen = get_current_screen();
-		if ( ! $screen || ! in_array( $screen->post_type, $this->get_supported_post_types(), true ) ) {
+		if ( ! $screen || ! in_array( $screen->post_type, self::get_supported_post_types(), true ) ) {
 			return;
 		}
 
@@ -84,7 +84,11 @@ class Plugin {
 		include SEOAI_PATH . 'templates/review-modal.php';
 	}
 
-	private function get_supported_post_types(): array {
-		return apply_filters( 'seoai_supported_post_types', [ 'post', 'page' ] );
+	public static function get_supported_post_types(): array {
+		$saved = get_option( 'seoai_post_types', [ 'post', 'page' ] );
+		if ( empty( $saved ) || ! is_array( $saved ) ) {
+			$saved = [ 'post', 'page' ];
+		}
+		return apply_filters( 'seoai_supported_post_types', $saved );
 	}
 }

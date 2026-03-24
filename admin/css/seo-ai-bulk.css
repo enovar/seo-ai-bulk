@@ -208,9 +208,44 @@
 	background: #f9f9f9;
 }
 
+#seoai-apply-progress-wrap {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+}
+
+#seoai-apply-progress-bar {
+	flex: 1;
+	height: 10px;
+	background: #e0e0e0;
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+#seoai-apply-progress-fill {
+	height: 100%;
+	width: 0%;
+	background: #1a7931;
+	border-radius: 5px;
+	transition: width 0.25s ease;
+}
+
+#seoai-apply-progress-label {
+	white-space: nowrap;
+	font-size: 13px;
+	color: #50575e;
+	min-width: 50px;
+}
+
 #seoai-apply-all-status {
 	font-size: 13px;
 	color: #50575e;
+}
+
+#seoai-apply-all-status.seoai-all-applied {
+	font-weight: 600;
+	color: #1a7931;
 }
 
 /* Settings page */

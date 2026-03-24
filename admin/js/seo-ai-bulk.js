@@ -264,7 +264,7 @@
 			$row.find( 'input, textarea' ).prop( 'disabled', disabled );
 		},
 
-		saveRow: function ( $row ) {
+		saveRow: function ( $row, callback ) {
 			var postId = $row.data( 'post-id' );
 			this.setRowStatus( $row, 'generating' );
 
@@ -287,6 +287,9 @@
 			} )
 			.fail( function () {
 				SEOAIBulk.setRowStatus( $row, 'error', 'Request failed.' );
+			} )
+			.always( function () {
+				if ( typeof callback === 'function' ) callback();
 			} );
 		},
 
@@ -296,24 +299,48 @@
 		},
 
 		applyAll: function () {
-			var $rows = $( '#seoai-review-tbody tr' );
-			var self  = this;
-			var count = 0;
+			var $rows   = $( '#seoai-review-tbody tr' );
+			var self    = this;
+			var toSave  = [];
 
 			$rows.each( function () {
 				var $row   = $( this );
 				var status = $row.find( '.seoai-status' ).attr( 'class' ) || '';
 				if ( status.indexOf( 'saved' ) === -1 && status.indexOf( 'skipped' ) === -1 && $row.data( 'generated' ) ) {
-					count++;
-					self.saveRow( $row );
+					toSave.push( $row );
 				}
 			} );
 
-			if ( count === 0 ) {
+			if ( toSave.length === 0 ) {
 				$( '#seoai-apply-all-status' ).text( 'Nothing to apply.' );
-			} else {
-				$( '#seoai-apply-all-status' ).text( 'Saving ' + count + ' post(s)...' );
+				return;
 			}
+
+			var total = toSave.length;
+			var done  = 0;
+
+			$( '#seoai-apply-all' ).prop( 'disabled', true );
+			$( '#seoai-apply-all-status' ).text( '' );
+			$( '#seoai-apply-progress-fill' ).css( 'width', '0%' );
+			$( '#seoai-apply-progress-label' ).text( '0 / ' + total );
+			$( '#seoai-apply-progress-wrap' ).show();
+
+			function onSaved() {
+				done++;
+				var pct = Math.round( ( done / total ) * 100 );
+				$( '#seoai-apply-progress-fill' ).css( 'width', pct + '%' );
+				$( '#seoai-apply-progress-label' ).text( done + ' / ' + total );
+
+				if ( done === total ) {
+					$( '#seoai-apply-progress-wrap' ).hide();
+					$( '#seoai-apply-all-status' ).addClass( 'seoai-all-applied' ).text( '✓ All applied!' );
+					$( '#seoai-apply-all' ).prop( 'disabled', false );
+				}
+			}
+
+			$.each( toSave, function ( i, $row ) {
+				self.saveRow( $row, onSaved );
+			} );
 		},
 
 		/* ---------------------------------------------------------------
