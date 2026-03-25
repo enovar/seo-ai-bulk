@@ -33,6 +33,10 @@
 		</div>
 
 		<div class="seoai-modal-footer">
+			<label class="seoai-publish-label">
+				<input type="checkbox" id="seoai-publish-on-save" value="1" />
+				<?php esc_html_e( 'Publish posts after saving', 'seo-ai-bulk' ); ?>
+			</label>
 			<button type="button" id="seoai-apply-all" class="button button-primary">
 				<?php esc_html_e( 'Apply All', 'seo-ai-bulk' ); ?>
 			</button>

@@ -265,7 +265,8 @@
 		},
 
 		saveRow: function ( $row, callback ) {
-			var postId = $row.data( 'post-id' );
+			var postId  = $row.data( 'post-id' );
+			var publish = $( '#seoai-publish-on-save' ).is( ':checked' ) ? 1 : 0;
 			this.setRowStatus( $row, 'generating' );
 
 			$.post( seoaiBulk.ajaxUrl, {
@@ -275,6 +276,7 @@
 				seo_title:       $row.find( '.seoai-title-input' ).val(),
 				seo_description: $row.find( '.seoai-desc-input' ).val(),
 				seo_keyword:     $row.find( '.seoai-keyword-input' ).val(),
+				publish:         publish,
 			} )
 			.done( function ( resp ) {
 				if ( resp.success ) {

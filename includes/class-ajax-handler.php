@@ -41,6 +41,7 @@ class AjaxHandler {
 		$title       = isset( $_POST['seo_title'] )       ? sanitize_text_field( wp_unslash( $_POST['seo_title'] ) )       : '';
 		$description = isset( $_POST['seo_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['seo_description'] ) ) : '';
 		$keyword     = isset( $_POST['seo_keyword'] )     ? sanitize_text_field( wp_unslash( $_POST['seo_keyword'] ) )     : '';
+		$publish     = ! empty( $_POST['publish'] );
 
 		if ( ! $post_id ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'seo-ai-bulk' ) ] );
@@ -53,6 +54,11 @@ class AjaxHandler {
 		try {
 			$writer = new SEOWriter();
 			$writer->write( $post_id, $title, $description, $keyword );
+
+			if ( $publish ) {
+				wp_update_post( [ 'ID' => $post_id, 'post_status' => 'publish' ] );
+			}
+
 			wp_send_json_success( [ 'message' => __( 'SEO data saved.', 'seo-ai-bulk' ) ] );
 		} catch ( \Exception $e ) {
 			wp_send_json_error( [ 'message' => $e->getMessage() ] );
