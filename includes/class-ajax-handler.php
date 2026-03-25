@@ -55,9 +55,13 @@ class AjaxHandler {
 			$writer = new SEOWriter();
 			$writer->write( $post_id, $title, $description, $keyword );
 
+			// Trigger save_post hooks so RankMath (and other SEO plugins) recalculate
+			// their score immediately — without this they stay stale until a manual save.
+			$args = [ 'ID' => $post_id ];
 			if ( $publish ) {
-				wp_update_post( [ 'ID' => $post_id, 'post_status' => 'publish' ] );
+				$args['post_status'] = 'publish';
 			}
+			wp_update_post( $args );
 
 			wp_send_json_success( [ 'message' => __( 'SEO data saved.', 'seo-ai-bulk' ) ] );
 		} catch ( \Exception $e ) {

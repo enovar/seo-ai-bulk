@@ -48,6 +48,10 @@ class SEOWriter {
 		update_post_meta( $post_id, 'rank_math_title',          $title );
 		update_post_meta( $post_id, 'rank_math_description',    $description );
 		update_post_meta( $post_id, 'rank_math_focus_keyword',  $keyword );
+		// RankMath score is calculated by the block editor's JS engine.
+		// Delete the stale score so it shows as unscored rather than a wrong low value.
+		// It will be recalculated correctly the next time the post is opened/saved in the editor.
+		delete_post_meta( $post_id, 'rank_math_seo_score' );
 	}
 
 	private function write_aioseo( int $post_id, string $title, string $description, string $keyword ): void {
